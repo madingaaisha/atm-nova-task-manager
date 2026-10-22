@@ -1,0 +1,25 @@
+# Virtual environments
+.venv/
+venv/
+
+# Local task data and temporary writes
+tasks.json
+tasks.json.tmp
+
+# Python-generated files
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Secrets and local configuration
+.env
+.env.*
+*.pem
+*.key
+
+# Editors and operating systems
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
