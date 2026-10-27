@@ -9,12 +9,14 @@ from task_manager import TaskManager, TaskNotFoundError, TaskValidationError
 DATA_FILE = Path(__file__).with_name("tasks.json")
 
 
-def display_tasks(tasks: list[dict], heading: str) -> None:
+def display_tasks(
+    tasks: list[dict], heading: str, empty_message: str = "No tasks to show."
+) -> None:
     """Print a readable task list."""
     print(f"\n{heading}")
     print("-" * len(heading))
     if not tasks:
-        print("No tasks to show.")
+        print(empty_message)
         return
 
     for task in tasks:
@@ -23,6 +25,18 @@ def display_tasks(tasks: list[dict], heading: str) -> None:
         print(f"[{status}] {task['title']}")
         print(f"  ID: {task['id']}")
         print(f"  Priority: {task['priority']} | Due: {due}")
+
+
+def view_tasks(
+    manager: TaskManager,
+    heading: str,
+    completed: bool | None = None,
+    empty_message: str = "No tasks to show.",
+) -> None:
+    """Display a task category and wait so the user can read the result."""
+    tasks = manager.list_tasks(completed=completed)
+    display_tasks(tasks, heading, empty_message)
+    input("\nPress Enter to return to the main menu...")
 
 
 def choose_task_id(manager: TaskManager, prompt: str) -> str | None:
@@ -83,9 +97,21 @@ def main() -> None:
 
     actions = {
         "1": lambda: add_task(manager),
-        "2": lambda: display_tasks(manager.list_tasks(), "All tasks"),
-        "3": lambda: display_tasks(manager.list_tasks(completed=False), "Pending tasks"),
-        "4": lambda: display_tasks(manager.list_tasks(completed=True), "Completed tasks"),
+        "2": lambda: view_tasks(
+            manager, "All tasks", empty_message="There are no tasks yet."
+        ),
+        "3": lambda: view_tasks(
+            manager,
+            "Pending tasks",
+            completed=False,
+            empty_message="There are no pending tasks.",
+        ),
+        "4": lambda: view_tasks(
+            manager,
+            "Completed tasks",
+            completed=True,
+            empty_message="There are no completed tasks.",
+        ),
         "5": lambda: complete_task(manager),
         "6": lambda: delete_task(manager),
     }
